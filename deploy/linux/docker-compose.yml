@@ -1,0 +1,25 @@
+version: "3.9"
+
+services:
+  loggen:
+    build:
+      context: .
+      dockerfile: Dockerfile.log
+    container_name: log-generator
+    environment:
+      # 필요 시 실행할 파일 교체 가능
+      - MAIN=logGenerator.py
+      - PYTHONUNBUFFERED=1
+    restart: unless-stopped
+    tty: true   # 로그를 터미널에 바로 볼 때 편함
+
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile.api
+    container_name: fastapi-app
+    ports:
+      - "8000:8000"   # 호스트:컨테이너
+    environment:
+      - PYTHONUNBUFFERED=1
+    restart: unless-stopped

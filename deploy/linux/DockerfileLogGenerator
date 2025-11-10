@@ -1,0 +1,28 @@
+# Dockerfile
+FROM python:3.11-slim
+
+# 콘테이너 안 작업 디렉토리
+WORKDIR /app
+
+# 소스 복사
+COPY . /app
+
+# (옵션) requirements.txt가 있으면 설치
+# 없으면 건너뜀
+RUN /bin/sh -c 'if [ -f requirements.txt ]; then \
+      pip install --no-cache-dir -r requirements.txt; \
+    fi'
+
+# 로그 버퍼링 없이 바로 출력되게
+ENV PYTHONUNBUFFERED=1
+
+# 실행할 파이썬 파일 이름 (필요시 바꿔서 사용)
+# 예: 파일명이 simpleServer.py면 MAIN=simpleServer.py 로 바꿔도 됨
+ENV MAIN=logGenerator.py
+
+# 비루트 사용자로 실행 (보안)
+RUN adduser --disabled-password --gecos "" appuser && chown -R appuser /app
+USER appuser
+
+# 실행
+CMD ["sh", "-c", "python $MAIN"]
